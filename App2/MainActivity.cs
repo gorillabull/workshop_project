@@ -31,56 +31,42 @@ namespace App2
             // and attach an event to it
             Button button = FindViewById<Button>(Resource.Id.myButton);
             Button algorithm1 = FindViewById<Button>(Resource.Id.button1);
+            Button algo2 = FindViewById<Button>(Resource.Id.button2); //hook up an ui element to the backend code 
+
+            view1 = FindViewById<ImageView>(Resource.Id.imageView1);
 
             Stream stream = null;
             Bitmap bmp1;
             HttpClient client = new HttpClient();
 
-
-
-
             stream = client.GetStreamAsync("https://i.imgur.com/OVXxVoA.jpg").Result;
 
-
-            view1 = FindViewById<ImageView>(Resource.Id.imageView1);
-
-
-            //Task<HttpResponseMessage> resp = client.PostAsync("http://70.173.104.68:81/thisisanextremelylongurljusttotestsomestuffoutmaily_thelengthlimit_of_a_url_sent_from_a_phone.", null);
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.InMutable = false;
-            
-            bmp1 = BitmapFactory.DecodeStream(stream, new Rect(), o);
-            
-
-
-
+            bmp1 = BitmapFactory.DecodeStream(stream);//do not do async 
+            view1.LongClick += View1_LongClick;
             view1.SetImageBitmap(bmp1);
-
-
-            
-
-
             button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
             algorithm1.Click += delegate
             {
-                bmp1.UnlockPixels();
-                
-
-                for (int i = 0; i < bmp1.Width; i++)
-                {
-
-                    for (int j = 0; j < bmp1.Height; j++)
-                    {
-                        bmp1.SetPixel(i, j,new Color(23 ));
-                    }
-                }
-
-
-//                bmp1 = (Bitmap)BitmapFactory.FromArray<int[]>(datum);
-                bmp1.LockPixels();
-                view1.SetImageBitmap(bmp1);
+                view1.ImageAlpha -= 3;
+                //view1.SetCameraDistance(view1.CameraDistance - 5);
+                view1.SetPadding(10, 10, 10, 10);
+                view1.SetX(view1.GetX() + 50);
             };
 
+            algo2.Click += delegate
+             {
+                 view1.ScaleX += 4;
+                 view1.ImageAlpha += 3;
+                 view1.SetX(view1.GetX() - 50);
+             };
+        }
+
+        private void View1_LongClick(object sender, Android.Views.View.LongClickEventArgs e)
+        {
+            view1.RotationX += 20;
+            Matrix m = view1.ImageMatrix;
+            m.SetRotate(10);
+            view1.ImageMatrix = m;
         }
     }
 }
